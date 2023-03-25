@@ -1,14 +1,48 @@
-import requests
+#!/usr/bin/env python3
+#Import open AI OS and System Modules
+import openai,os,sys
+from dotenv import load_dotenv
 
-url = "https://chatgpt-4-bing-ai-chat-api.p.rapidapi.com/chatgpt-4-bing-ai-chat-api/0.2/send-message/"
+load_dotenv()
 
-payload = "bing_u_cookie=%3CREQUIRED%3E&question=Give%20me%203%20examples%20of%20how%20I%20can%20use%20you."
-headers = {
-	"content-type": "application/x-www-form-urlencoded",
-	"X-RapidAPI-Key": "ef9f388820msh8a6df62e5f78f65p120aadjsn53c802623fd8",
-	"X-RapidAPI-Host": "chatgpt-4-bing-ai-chat-api.p.rapidapi.com"
-}
+# accessing parsed_text
+with open('resume_text.txt') as f:
+    resume_text = f.read()
 
-response = requests.request("POST", url, data=payload, headers=headers)
+openai.api_key = os.getenv('CHAT_GPT_API_KEY')
+messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+]
+while True:
+    message = "summarize this text for resume"+resume_text
+    if message:
+        messages.append(
+                {"role": "user", "content": message},
+        )
+        chat_completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=messages
+        )
+    answer = chat_completion.choices[0].message.content
+    resume_text=answer
+    f = open("summary.txt", "w")
+    f.write(answer)
+    f.close()
+    break
 
-print(response.text)
+# for getting prompt for images
+while True:
+    message = "get the prompt keywords for stable diffusion for the given text"+ "'" + resume_text + "'"
+    if message:
+        messages.append(
+                {"role": "user", "content": message},
+        )
+        chat_completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=messages
+        )
+    answer = chat_completion.choices[0].message.content
+    f = open("prompt_text.txt", "w")
+    f.write(answer)
+    f.close()
+    break

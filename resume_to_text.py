@@ -1,9 +1,8 @@
-
 # importing required modules
 from PyPDF2 import PdfReader
  
 # creating a pdf reader object
-reader = PdfReader('example.pdf')
+reader = PdfReader('sahil.pdf')
  
 # printing number of pages in pdf file
 print(len(reader.pages))
@@ -14,3 +13,6 @@ page = reader.pages[0]
 # extracting text from page
 text = page.extract_text()
 print(text)
+f = open("resume_text.txt", "w")
+f.write(text)
+f.close()
